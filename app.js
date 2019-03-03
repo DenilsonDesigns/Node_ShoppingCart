@@ -36,12 +36,17 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  User.findById("5c7899ff1a0e091d40f2de88")
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then(user => {
       req.user = user;
       next();
     })
-    .catch(err => console.log(err));
+    .catch(err => {
+      console.log(err);
+    });
 });
 
 app.use("/admin", adminRoutes);
